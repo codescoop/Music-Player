@@ -1,4 +1,4 @@
-## music-player
+## Music Player
 A lightweight music player written in Python supporting almost all types of audio formats.
 
 ## Dependencies
