@@ -18,7 +18,7 @@ menubar = Menu(root, bg="#ccba41")
 root.config(menu=menubar, bg="#141f30")
 
 # current_music = ""
-current_music = "downloads/dj.mp3"
+current_music_path = "downloads/dj.mp3"
 pause_status = False
 stop_status = False
 mute_status = False
@@ -27,23 +27,28 @@ reset_tread = False
 audio_length = 0.0
 time_tread = threading.Thread()
 time_counter = "unactive"
+playlist_count=0
+playlist = []
 
 def browse_file():
-    global current_music
+    global current_music_path
     global pause_status
     global reset_tread
     global time_counter
+    global playlist_count
+    global playlist
 
-    current_music = filedialog.askopenfilename()
+    current_music_path = filedialog.askopenfilename()
+    current_music = os.path.basename(current_music_path)
+    playlist_lbox.insert(playlist_count, current_music)
+    playlist.insert(playlist_count, current_music_path)
+    playlist_count += 1
     pause_status = False
-    # mixer.music.stop()
-    # print("browse--------",reset_tread)
+
     if time_counter == "active":
         reset_tread = True
     time.sleep(1)
-    # reset_tread = False
-    # print(reset_tread)
-    play_music()
+    # play_music()
 
 
 def aboutus():
@@ -51,18 +56,23 @@ def aboutus():
 
 
 def play_music():
-    global current_music
+    global current_music_path
     global pause_status
     global stop_status
+    global playlist
+
+    selected_music =  playlist_lbox.curselection()
+    current_music_path = playlist[int(selected_music[0])]
+
 
     if pause_status== False:
 
         stop_status = False
-        if current_music != "":
+        if current_music_path != "":
             print("1111111111111111111111")
-            mixer.music.load(current_music)
+            mixer.music.load(current_music_path)
             mixer.music.play()
-            statusLabel["text"] = "Playing Music" + " - " + os.path.basename(current_music)
+            statusLabel["text"] = "Playing Music" + " - " + os.path.basename(current_music_path)
             dispaly_music()
         else:
             messagebox.showerror("File not found", "No file selected. Please check again")
@@ -82,7 +92,7 @@ def play_music():
         stop_status = False
         pause_status = False
 
-    
+
 def stop_music():
     mixer.music.stop()
     statusLabel["text"] = "Music Stopped"
@@ -149,14 +159,14 @@ def mute_music():
 def dispaly_music():
     global audio_length
     global time_tread
-    musiclabel["text"]="Playing - "+os.path.basename(current_music)
-    file_ext = os.path.splitext(current_music)[1]
+    musiclabel["text"]="Playing - "+os.path.basename(current_music_path)
+    file_ext = os.path.splitext(current_music_path)[1]
 
     if file_ext == ".wav":
-        audio = mixer.Sound(current_music)
+        audio = mixer.Sound(current_music_path)
         audio_length=audio.get_length()
     else:
-        audio_metadata = mp3(current_music)
+        audio_metadata = mp3(current_music_path)
         audio_length = audio_metadata.info.length
 
     s_min,s_sec = divmod(audio_length,60)
@@ -200,6 +210,12 @@ def count_duration(s_time):
     print("exit count_duration \n")
     # time_counter = "unactive"
 
+def del_playlist():
+    print(playlist)
+    selected_music = playlist_lbox.curselection()
+    playlist_lbox.delete(selected_music)
+    playlist.pop(selected_music[0])
+    print(playlist)
 
 def on_closing():
     stop_music()
@@ -218,17 +234,27 @@ submenu2 = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Help", menu=submenu2)
 submenu2.add_command(label="About", command=aboutus)
 
+statusLabel = Label(root, text="Welcome to YY Music Player", bg="#e3c85b",relief=SUNKEN, anchor=W)
+statusLabel.pack(side=BOTTOM, fill=X)
 
-musiclabel = Label(root, text="No Music file selected")
+
+mainFrame = Frame(root)
+mainFrame.pack(side=LEFT)
+
+
+leftFrame = Frame(mainFrame)
+leftFrame.pack(side=LEFT)
+
+musiclabel = Label(leftFrame, text="No Music file selected")
 musiclabel.pack(padx=10,pady=10)
 
-lengthlabel = Label (root,text="Total length - --:--")
+lengthlabel = Label (leftFrame,text="Total length - --:--")
 lengthlabel.pack(padx=10,pady=15)
 
-cur_lengthlabel = Label (root,text="Current length - --:--", relief=GROOVE)
+cur_lengthlabel = Label (leftFrame,text="Current length - --:--", relief=GROOVE)
 cur_lengthlabel.pack(padx=10,pady=15)
 
-midFrame = Frame(root)
+midFrame = Frame(leftFrame)
 midFrame.pack(padx=10)
 
 playphoto = PhotoImage(file="downloads/play64.png")
@@ -243,7 +269,7 @@ pausephoto = PhotoImage(file="downloads/fwd64.png")
 pauseBtn = Button(midFrame, image=pausephoto, command=pause_music)
 pauseBtn.grid(row=0,column=2,padx=5,pady=5)
 
-othFrame = Frame(root)
+othFrame = Frame(leftFrame)
 othFrame.pack(padx=10, pady=15)
 
 rewindphoto = PhotoImage(file="downloads/fwd32.png")
@@ -262,8 +288,19 @@ volScale.set(default)
 mixer.music.set_volume(default / 100)
 volScale.grid(row=0,column=2,padx=5,pady=5)
 
-statusLabel = Label(root, text="Welcome to YY Music Player", bg="#e3c85b",relief=SUNKEN, anchor=W)
-statusLabel.pack(side=BOTTOM, fill=X)
+
+
+rightFrame = Frame(mainFrame)
+rightFrame.pack()
+
+playlist_lbox=Listbox(rightFrame)
+playlist_lbox.pack(padx=15,pady=5)
+
+addBtn = Button(rightFrame, text="+ ADD", command=browse_file)
+addBtn.pack(side=LEFT,padx=15)
+
+delBtn = Button(rightFrame, text="+ DEL", command=del_playlist)
+delBtn.pack()
 
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
