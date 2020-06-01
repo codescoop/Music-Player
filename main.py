@@ -25,26 +25,24 @@ mute_status = False
 tread_status = False
 reset_tread = False
 audio_length = 0.0
-time_tread=threading.Thread()
-time_counter="unactive"
+time_tread = threading.Thread()
+time_counter = "unactive"
 
 def browse_file():
     global current_music
     global pause_status
-
-    current_music = filedialog.askopenfilename()
-    # print(current_music)
-    pause_status = False
-    # mixer.music.stop()
     global reset_tread
     global time_counter
 
-    print("browse--------",reset_tread)
+    current_music = filedialog.askopenfilename()
+    pause_status = False
+    # mixer.music.stop()
+    # print("browse--------",reset_tread)
     if time_counter == "active":
         reset_tread = True
-    time.sleep(4)
+    time.sleep(1)
     # reset_tread = False
-    print(reset_tread)
+    # print(reset_tread)
     play_music()
 
 
@@ -71,10 +69,11 @@ def play_music():
 
     elif pause_status == True and stop_status == True:
         print("2222222222222222222")
-        mixer.music.play()
-        statusLabel["text"] = "Music restarted"
         stop_status = False
         pause_status = False
+        mixer.music.play()
+        statusLabel["text"] = "Music restarted"
+
 
     else:
         print("33333333333333333")
@@ -83,15 +82,7 @@ def play_music():
         stop_status = False
         pause_status = False
 
-    # global count
-    # global tread_status
-    # if tread_status == False:
-    #     count += 1
-    #     print(count)
-    # dispaly_music()
-        # tread_status = True
-
-
+    
 def stop_music():
     mixer.music.stop()
     statusLabel["text"] = "Music Stopped"
@@ -121,19 +112,17 @@ def adjust_vol(value):
 
 def rewind_music():
     global stop_status
-    stop_status = False
     global pause_status
-    pause_status = False
     global reset_tread
     global time_counter
-
-    print("rewind",reset_tread)
+    pause_status = False
+    stop_status = False
+    # print("rewind",reset_tread)
     if time_counter == "active":
         reset_tread = True
     # reset_tread = True
     time.sleep(2)
-
-    print(reset_tread)
+    # print(reset_tread)
     play_music()
     statusLabel["text"] = "Music Rewinded"
 
@@ -159,8 +148,8 @@ def mute_music():
 
 def dispaly_music():
     global audio_length
+    global time_tread
     musiclabel["text"]="Playing - "+os.path.basename(current_music)
-
     file_ext = os.path.splitext(current_music)[1]
 
     if file_ext == ".wav":
@@ -173,11 +162,11 @@ def dispaly_music():
     s_min,s_sec = divmod(audio_length,60)
     format_length = "{:02d}:{:02d}".format(round(s_min),round(s_sec))
     lengthlabel["text"] = "Total length - "+ format_length
-    global time_tread
+
     time_tread = threading.Thread(target=count_duration, args=(audio_length,))
     time_tread.start()
     # start_tread()
-    print("leaving dispaly")
+    # print("leaving dispaly")
 
 
 def count_duration(s_time):
@@ -185,11 +174,11 @@ def count_duration(s_time):
     time_counter = "active"
 
     # time.sleep(2)
-    print("entered count_duration \n")
+    print("entered count_duration")
     original_t = s_time
-    print(original_t)
+    # print(original_t)
     global reset_tread
-    print(reset_tread)
+    print("Tread Status",reset_tread)
     while s_time:
         # print("in while")
         if reset_tread == True:
@@ -207,33 +196,14 @@ def count_duration(s_time):
             cur_lengthlabel["text"] = "Current length - "+ format_length
             time.sleep(1)
             s_time -= 1
-            print("exit entered ")
+            # print("exit entered ")
     print("exit count_duration \n")
-
-
-# def start_tread():
-#     global time_tread
-#     global audio_length
-#     global reset_tread
-#     time_tread = threading.Thread(target=count_duration, args=(audio_length,))
-#     if reset_tread == False:
-#         print("Entered start tread \n")
-#         time_tread.start()
-#         # reset_tread = True
-#         print("Tread Started \n")
-#     else:
-    #     # print("Tread Killed \n")
-    #     # time_tread.join()
-    #
-    #     print("-----------")
-    #     reset_tread = False
-    #     start_tread()
+    # time_counter = "unactive"
 
 
 def on_closing():
     stop_music()
     root.destroy()
-
 
 
 ## GUI Section -------------------------------------
