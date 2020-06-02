@@ -11,7 +11,7 @@ if sys.platform == "win32":
     base = "Win32GUI"
 
 setup(  name = "MusicPlayer",
-        version = "0.1",
+        version = "v1.0.0-beta.1",
         description = "Music Player -[YYSCOOP.com]",
         options = {"build_exe": build_exe_options},
-        executables = [Executable("main.py", base=base)])
+        executables = [Executable("MusicPlayer.py", base=base)])
