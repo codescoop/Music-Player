@@ -15,7 +15,7 @@ A lightweight music player written in Python supporting almost all types of audi
 or Execute:
 
 ```
-ExecuteEncrypto.cmd
+ExecuteMusicPlayer.cmd
 ```
 
 ## Dependencies
