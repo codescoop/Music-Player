@@ -17,6 +17,7 @@ or Execute:
 ```
 ExecuteMusicPlayer.cmd
 ```
+![](images/screeshot - mp.png)
 
 ## Dependencies
 
