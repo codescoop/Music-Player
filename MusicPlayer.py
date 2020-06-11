@@ -15,10 +15,12 @@ mixer.init()
 root = ThemedTk(theme="arc")
 root.title("Music Player - [YYScoop.com]")
 root.iconbitmap("images/favicon.ico")
-root.geometry("620x380")
+root.geometry("600x484")
+root.resizable(0,0)
+
 
 menubar = Menu(root, bg="#ccba41")
-root.config(menu=menubar, bg="#141f30")
+root.config(menu=menubar, bg="#FFFFFF")
 
 # current_music = ""
 current_music_path = "sample/Sample Song mp3.mp3"
@@ -176,7 +178,7 @@ def dispaly_music():
 
     s_min,s_sec = divmod(audio_length,60)
     format_length = "{:02d}:{:02d}".format(round(s_min),round(s_sec))
-    lengthlabel["text"] = "Total length - "+ format_length
+    lengthlabel["text"] = " 00:"+ format_length
 
     time_tread = threading.Thread(target=count_duration, args=(audio_length,))
     time_tread.start()
@@ -198,7 +200,7 @@ def count_duration(s_time):
         else:
             s_min, s_sec = divmod(s_time, 60)
             format_length = "{:02d}:{:02d}".format(round(s_min), round(s_sec))
-            cur_lengthlabel["text"] = "Current length - "+ format_length
+            cur_lengthlabel["text"] = "00:"+ format_length
             time.sleep(1)
             s_time -= 1
 
@@ -211,6 +213,20 @@ def del_playlist():
 def on_closing():
     stop_music()
     root.destroy()
+
+c=False
+def display_playlist():
+	global c
+	if c==True:
+		pFrame.grid_forget()
+		showBtn["text"]="Show Playlist"
+		c=False
+	else:
+		pFrame.grid(row=0,column=0,padx=5,pady=5,sticky=E+N)
+		showBtn["text"]="Hide Playlist"
+		c=True
+		
+		
 
 
 ## GUI Section -------------------------------------
@@ -226,98 +242,112 @@ menubar.add_cascade(label="Help", menu=submenu2)
 submenu2.add_command(label="About", command=aboutus)
 submenu2.add_command(label="Credit", command=credit)
 
-statusLabel = Label(root, text="Click on [+Add] Song to Play Music", bg="#e3c85b",relief=SUNKEN, anchor=W)
+## Status Bar --------------------------------------------------------------------------------------------------
+
+statusLabel = Label(root, text="Click on [+Add/Show] to create Music Playlist", bg="#29648A",fg="white",relief=SUNKEN, anchor=W)
 statusLabel.pack(side=BOTTOM, fill=X)
 
 
-mainFrame = Frame(root, bg="#141f30",highlightbackground="white",highlightthickness=1)
-mainFrame.pack(side=LEFT,padx=15)
+mainFrame = Frame(root, bg="#FFFFFF",highlightbackground="#FFFFFF",highlightthickness=0)
+mainFrame.pack(side=LEFT,padx=0)
 
-## Left Frame --------------------------------------
+## Left Frame --------------------------------------------------------------------------------------------------
 
-leftFrame = Frame(mainFrame, bg="#141f30")
+leftFrame = Frame(mainFrame, bg="#FFFFFF")
 leftFrame.grid(row=0,column=0,padx=5,pady=5)
 
 ## Top Frame (inside Left Frame) -------------------
 
-topFrame = Frame(leftFrame, bg="#141f30")
-topFrame.pack(padx=10)
+topFrame = Frame(leftFrame, bg="#FFFFFF")
+topFrame.pack(padx=0)
 
-sampleimage_photo = PhotoImage(file="images/sample.png")
-sampleimagelabel = Label(topFrame, image=sampleimage_photo,width=100,height=100)
-sampleimagelabel.grid(rowspan=3,column=0,padx=5,pady=5,sticky=W+N)
+sampleimage_photo = PhotoImage(file="images/m9.png")
+sampleimagelabel = Label(topFrame, image=sampleimage_photo,width=585,height=304)
+sampleimagelabel.grid(row=0,column=0,padx=0,pady=0,sticky=W+N)
 
-musiclabel = ttk.Label(topFrame, text="Playing - No Music file selected", width=30)
-musiclabel.grid(row=0,column=1,padx=5,pady=5)
+#showBtn = ttk.Button(topFrame, text="Show Playlist", width=13,command=display_playlist)
+#showBtn.grid(row=0,column=0,padx=5,pady=5,sticky=E+S)
 
-lengthlabel = ttk.Label(topFrame,text="Total length - --:--")
-lengthlabel.grid(row=1,column=1,padx=5,pady=5)
+## Playlist Toggle -------------
 
+pFrame = Frame(topFrame, bg="white")
+pFrame.grid(row=0,column=0,padx=5,pady=0,sticky=E+N)
+#grid(row=0,column=0,padx=5,pady=5,sticky=W+N)
 
-cur_lengthlabel = ttk.Label (topFrame,text="Current length - --:--", relief=GROOVE)
-cur_lengthlabel.grid(row=2,column=1,padx=5,pady=5)
+pFrame.grid_forget()
 
+add= ttk.Label(pFrame,text="Add Songs to Playlist",font=("Helvetica",15,"bold"))
+add.pack(pady=5)
 
-
-## Mid Frame (inside Left Frame) -------------------
-
-midFrame = Frame(leftFrame, bg="#141f30")
-midFrame.pack(padx=10, pady=10)
-
-playphoto = PhotoImage(file="images/play64.png")
-playBtn = Button(midFrame, image=playphoto, command=play_music, bg="#141f30",borderwidth=0)
-playBtn.grid(row=0,column=0,padx=5,pady=5)
-
-stopphoto = PhotoImage(file="images/stop64.png")
-stopBtn = Button(midFrame, image=stopphoto, command=stop_music, bg="#141f30",borderwidth=0)
-stopBtn.grid(row=0,column=1,padx=5,pady=5)
-
-pausephoto = PhotoImage(file="images/fwd64.png")
-pauseBtn = Button(midFrame, image=pausephoto, command=pause_music, bg="#141f30",borderwidth=0)
-pauseBtn.grid(row=0,column=2,padx=5,pady=5)
-
-## Bottom Frame (inside Left Frame) -------------------
-
-bottomFrame = Frame(leftFrame, bg="#141f30")
-bottomFrame.pack(padx=10, pady=5)
-
-rewindphoto = PhotoImage(file="images/rewind32.png")
-rewindBtn = Button(bottomFrame, image=rewindphoto, command=rewind_music, bg="#141f30",borderwidth=0)
-rewindBtn.grid(row=0,column=0,padx=5,pady=5)
-
-mutephoto = PhotoImage(file="images/mute32.png")
-volumephoto = PhotoImage(file="images/volume32.png")
-volumeBtn = Button(bottomFrame, image=volumephoto, command=mute_music, bg="#141f30",borderwidth=0)
-volumeBtn.grid(row=0,column=1,padx=5,pady=5)
-
-
-volScale = ttk.Scale(bottomFrame, from_=0, to=100, orient=HORIZONTAL, command=adjust_vol)
-default = 70
-volScale.set(default)
-mixer.music.set_volume(default / 100)
-volScale.grid(row=0,column=2,padx=5,pady=5)
-
-## Right Frame ------------------------------------------
-
-rightFrame = Frame(mainFrame, bg="#141f30")
-rightFrame.grid(row=0,column=1,padx=5,pady=5)
-
-
-add= ttk.Label(rightFrame,text="Add Songs to Playlist",font=("Helvetica",15,"bold"))
-add.pack()
-
-playlist_lbox = Listbox(rightFrame, bd=1, width=35,height=12)
+playlist_lbox = Listbox(pFrame, bd=1, width=35,height=13)
 current_music = os.path.basename(current_music_path)
 playlist_lbox.insert(playlist_count, current_music)
 playlist.insert(playlist_count, current_music_path)
 playlist_lbox.selection_set(0)
 playlist_lbox.pack(padx=15,pady=5)
 
-addBtn = ttk.Button(rightFrame, text="+ ADD Song", command=browse_file)
+addBtn = ttk.Button(pFrame, text="+ ADD Song", command=browse_file)
 addBtn.pack(side=LEFT,padx=15)
 
-delBtn = ttk.Button(rightFrame, text="- DELETE Song", command=del_playlist)
-delBtn.pack()
+delBtn = ttk.Button(pFrame, text="- DELETE Song", command=del_playlist)
+delBtn.pack(pady=5)
+
+## Mid Frame (inside Left Frame) -------------------
+
+midFrame = Frame(leftFrame, bg="#FFFFFF")
+midFrame.pack(padx=0, pady=5)
+
+cur_lengthlabel = ttk.Label (midFrame,text="  --:--:--  ")
+cur_lengthlabel.grid(row=0,column=0,padx=0,pady=5,sticky=W)
+
+lengthlabel = ttk.Label(midFrame,text="  --:--:--  ")
+lengthlabel.grid(row=0,column=1,padx=5,pady=5,sticky=W)
+
+musiclabel = ttk.Label(midFrame, text=" | Playing - No Music file selected", width=75)
+musiclabel.grid(row=0,column=2,padx=5,pady=5,sticky=W)
+
+## Bottom Frame (inside Left Frame) -------------------
+
+bottomFrame = Frame(leftFrame, bg="#FFFFFF")
+bottomFrame.pack(padx=0, pady=5)
+
+playphoto = PhotoImage(file="images/play64.png")
+playBtn = Button(bottomFrame, image=playphoto, command=play_music, bg="#FFFFFF",borderwidth=0)
+playBtn.grid(row=0,rowspan=2,column=0,padx=5,pady=5)
+
+stopphoto = PhotoImage(file="images/stop64.png")
+stopBtn = Button(bottomFrame, image=stopphoto, command=stop_music, bg="#FFFFFF",borderwidth=0)
+stopBtn.grid(row=0,rowspan=2,column=1,padx=5,pady=5)
+
+pausephoto = PhotoImage(file="images/fwd64.png")
+pauseBtn = Button(bottomFrame, image=pausephoto, command=pause_music, bg="#FFFFFF",borderwidth=0)
+pauseBtn.grid(row=0,rowspan=2,column=2,padx=5,pady=5)
+
+rewindphoto = PhotoImage(file="images/rewind32.png")
+rewindBtn = Button(bottomFrame, image=rewindphoto, command=rewind_music, bg="#FFFFFF",borderwidth=0)
+rewindBtn.grid(row=0,column=4,padx=5,pady=5)
+
+mutephoto = PhotoImage(file="images/mute32.png")
+volumephoto = PhotoImage(file="images/volume32.png")
+volumeBtn = Button(bottomFrame, image=volumephoto, command=mute_music, bg="#FFFFFF",borderwidth=0)
+volumeBtn.grid(row=0,column=5,padx=5,pady=5)
+
+plphoto = PhotoImage(file="images/playlist32.png")
+plBtn = Button(bottomFrame, image=plphoto,command=display_playlist, bg="#FFFFFF",borderwidth=0)
+plBtn.grid(row=0,column=6,padx=5,pady=5)
+
+pl2photo = PhotoImage(file="images/playlist32-2.png")
+pl2Btn = Button(bottomFrame, image=pl2photo,command=display_playlist, bg="#FFFFFF",borderwidth=0)
+pl2Btn.grid(row=0,column=7,padx=5,pady=5)
+
+showBtn = ttk.Button(bottomFrame, text="Show Playlist", width=13,command=display_playlist)
+showBtn.grid(row=0,column=8,padx=5,pady=5)
+
+volScale = ttk.Scale(bottomFrame, from_=0, to=100, orient=HORIZONTAL, length=330,command=adjust_vol)
+default = 70
+volScale.set(default)
+mixer.music.set_volume(default / 100)
+volScale.grid(row=1,column=4,columnspan=5,padx=5,pady=5)
 
 ## -----------------------------------------------------------
 
