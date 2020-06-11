@@ -20,10 +20,10 @@ ExecuteMusicPlayer.cmd
 
 ## Screenshots
 
-#### First Screenshot
+#### First:  
 ![Screenshot](screenshots/screenshot01.png "Screen1")  
   
-#### Second Screenshot
+#### Second:  
 ![Screenshot](screenshots/screenshot02.png "Screen1")
 
 ## Dependencies
