@@ -17,7 +17,14 @@ or Execute:
 ```
 ExecuteMusicPlayer.cmd
 ```
-![Screenshot](images/screeshot%20-%20mp.png "Screen1")
+
+## Screenshots
+
+#### First Screenshot
+![Screenshot](screenshots/screenshot01.png "Screen1")  
+  
+#### Second Screenshot
+![Screenshot](screenshots/screenshot02.png "Screen1")
 
 ## Dependencies
 
